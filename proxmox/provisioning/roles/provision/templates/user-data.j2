@@ -1,0 +1,13 @@
+#cloud-config
+user: {{ansible_user}}
+ssh_authorized_keys:
+  - {{ lookup("file", "{{ ansible_key_file }}") }}
+timezone: 'Europe/Berlin'
+package_update: true
+package_upgrade: true
+packages:
+  - qemu-guest-agent
+runcmd:
+  - systemctl enable --now qemu-guest-agent
+  - locale-gen en_US.UTF-8
+  - localectl set-locale LANG=en_US.UTF-8

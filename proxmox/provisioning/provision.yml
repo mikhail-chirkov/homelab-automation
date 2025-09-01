@@ -1,0 +1,10 @@
+- name: Provision VMs
+  hosts: servers
+  become: true
+  tasks:
+    - name: Loop over the VM configurations 
+      ansible.builtin.include_role:
+        name: provision
+      vars:
+        vm: "{{ item }}"
+      loop: "{{ vms }}"

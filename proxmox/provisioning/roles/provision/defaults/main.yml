@@ -1,0 +1,4 @@
+image_dir : /var/lib/vz/images
+# hack with dunmmy subdir due to the Proxmox parsing bug
+image_subdir: 0
+snippets_dir : /var/lib/vz/snippets

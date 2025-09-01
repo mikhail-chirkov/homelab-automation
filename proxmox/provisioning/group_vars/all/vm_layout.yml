@@ -1,0 +1,30 @@
+# TODO: fill in variables here or better create a vault
+api_user: FIXME
+api_token_id: FIXME
+api_token_secret: FIXME
+ansible_key_file: FIXME
+
+# IMPORTANT: due to regex issues in proxmox, the image extension should be set to qcow2
+images:
+  ubuntu2404:
+    url: "https://cloud-images.ubuntu.com/noble/20250805/noble-server-cloudimg-amd64.img"
+    checksum: "sha256:834af9cd766d1fd86eca156db7dff34c3713fbbc7f5507a3269be2a72d2d1820"
+    filename: "ubuntu-24.04.qcow2"
+
+# VM configurations
+vms:
+  - name: server
+    image: ubuntu2404
+    node: pve
+    memory: 2048
+    cores: 2
+    disk: 20G
+    ipconfig0: "ip=10.0.0.1/24,gw=10.0.0.1"
+
+  - name: worker
+    image: ubuntu2404
+    node: pve
+    memory: 4096
+    cores: 2
+    disk: 20G
+    ipconfig0: "ip=10.0.0.2/24,gw=10.0.0.1"

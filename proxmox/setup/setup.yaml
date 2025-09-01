@@ -1,0 +1,29 @@
+- name: Setup users and keys
+  hosts: servers
+  tasks:
+    - name: Install packages
+      ansible.builtin.apt:
+        update_cache: true
+        name:
+          - sudo
+          - python3-requests
+          - python3-proxmoxer
+
+    - name: Create sudo user
+      ansible.builtin.user:
+        name: "{{ user }}"
+        groups: sudo
+        append: true
+        shell: '/bin/bash'
+
+    - name: Set user rights
+      ansible.builtin.copy:
+        content: "ansible ALL=(ALL) NOPASSWD:ALL\n"
+        dest: "/etc/sudoers.d/{{ user }}"
+        mode: "0440"
+
+    - name: Add ssh key
+      ansible.posix.authorized_key:
+        user: "{{ user }}"
+        # verify path
+        key: "{{ ssh_key_path }}"

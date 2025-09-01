@@ -1,0 +1,88 @@
+- name: Check the image directory
+  ansible.builtin.file:
+    path: "{{ image_dir }}/{{ image_subdir }}"
+    state: directory
+    mode: '0755'
+
+- name: Ensure image file exists
+  ansible.builtin.get_url:
+    url: "{{ images[vm.image].url }}"
+    dest: "{{ image_dir }}/{{ image_subdir }}/{{ images[vm.image].filename }}"
+    checksum: "{{ images[vm.image].checksum }}"
+    mode: "0644"
+
+- name: Upload Cloud-Init data
+  ansible.builtin.template:
+    src: user-data.j2
+    dest: '{{ snippets_dir }}/{{ vm.name }}-user-data.yml'
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Create VM template from Cloud-Init image
+  community.general.proxmox_kvm:
+    api_user: '{{ api_user }}'
+    api_token_id: '{{ api_token_id }}'
+    api_token_secret: '{{ api_token_secret }}'
+    api_host: '{{ inventory_hostname }}'
+    node: '{{ vm.node }}'
+    name: '{{ vm.name }}'
+    memory: '{{ vm.memory }}'
+    cores: '{{ vm.cores }}'
+    onboot: true
+    scsi:
+      scsi0: 'local-lvm:0,import-from=local:{{ image_subdir }}/{{ images[vm.image].filename }},discard=on,ssd=1'
+    ipconfig:
+      ipconfig0: '{{ vm.ipconfig0 }}'
+    ostype: 'l26'
+    machine: 'q35'
+    cpu: 'host'
+    balloon: 0
+    scsihw: virtio-scsi-pci
+    boot: order=scsi0
+    net: '{"net0":"virtio,bridge=vmbr0"}'
+    serial: '{"serial0":"socket"}'
+    sockets: 1
+    ide:
+      ide2: 'local-lvm:cloudinit'
+    vga: serial0
+    agent: 'enabled=1'
+    cicustom: 'user=local:snippets/{{ vm.name }}-user-data.yml'
+
+- name: Wait until VM is ready
+  community.general.proxmox_vm_info:
+    api_user: '{{ api_user }}'
+    api_token_id: '{{ api_token_id }}'
+    api_token_secret: '{{ api_token_secret }}'
+    api_host: '{{ inventory_hostname }}'
+    node: '{{ vm.node }}'
+    name: '{{ vm.name }}'
+  register: vm_info
+  until: vm_info.proxmox_vms | length > 0
+  retries: 15
+  delay: 5
+
+- name: Resize VM
+  community.general.proxmox_disk:
+    api_user: '{{ api_user }}'
+    api_token_id: '{{ api_token_id }}'
+    api_token_secret: '{{ api_token_secret }}'
+    api_host: '{{ inventory_hostname }}'
+    name: '{{ vm.name }}'
+    disk: 'scsi0'
+    size: '{{ vm.disk }}'
+    state: 'resized'
+
+- name: Start VM
+  community.general.proxmox_kvm:
+    api_user: '{{ api_user }}'
+    api_token_id: '{{ api_token_id }}'
+    api_token_secret: '{{ api_token_secret }}'
+    api_host: '{{ inventory_hostname }}'
+    name: '{{ vm.name }}'
+    node: '{{ vm.node }}'
+    state: 'started'
+  async: 10
+  poll: 0
+  ignore_errors: true
+
