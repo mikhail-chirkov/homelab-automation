@@ -1,4 +1,13 @@
-image_dir : /var/lib/vz/images
-# hack with dunmmy subdir due to the Proxmox parsing bug
-image_subdir: 0
 snippets_dir : /var/lib/vz/snippets
+
+# base vmid for the created vms
+base_vmid: 2000
+
+# the vm parameters, it will create the specified number for vms with the same configuration for each host in inventory
+vm:
+  name: test
+  template: ubuntu2404golden
+  memory: 4096
+  cores: 4
+  disk: 50G
+  count: 3

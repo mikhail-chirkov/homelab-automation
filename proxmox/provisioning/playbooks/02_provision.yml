@@ -1,0 +1,17 @@
+- name: Provision vms
+  hosts: nodes
+  become: true
+  roles:
+    - provision
+
+- name: Generate vm inventory
+  hosts: localhost
+  tasks:
+    - name: Aggregate all hosts arrays
+      set_fact:
+        all_hosts: "{{ groups['all'] | map('extract', hostvars, 'vm_hosts') | list | flatten }}"
+
+    - name: Render inventory with hosts
+      template:
+        src: "{{ playbook_dir }}/../templates/generated_inventory.j2"
+        dest: "{{ playbook_dir }}/../{{ ansible_date_time.epoch }}_generated_inventory.yml"

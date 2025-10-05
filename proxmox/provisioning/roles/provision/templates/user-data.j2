@@ -1,5 +1,6 @@
 #cloud-config
 user: {{ansible_user}}
+hostname: {{ vm.name }}{{ node_base_vmid | int + item }}
 ssh_authorized_keys:
   - {{ lookup("file", "{{ ansible_key_file }}") }}
 timezone: 'Europe/Berlin'

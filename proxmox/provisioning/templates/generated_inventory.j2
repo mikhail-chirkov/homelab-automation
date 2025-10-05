@@ -1,0 +1,5 @@
+vms:
+  hosts:
+{% for host in all_hosts %}
+    {{ host }}:
+{% endfor %}

@@ -1,0 +1,4 @@
+nodes:
+  hosts:
+    dummy_hostname:
+      proxmox_node: dummy_proxmox_node

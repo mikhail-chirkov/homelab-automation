@@ -1,0 +1,17 @@
+# paths
+image_dir : /var/lib/vz/images
+# hack with dunmmy subdir due to the Proxmox parsing bug
+image_subdir: 0
+
+# IMPORTANT: due to regex issues in proxmox, the image extension should be set to qcow2
+download:
+  url: "https://cloud-images.ubuntu.com/noble/20250805/noble-server-cloudimg-amd64.img"
+  checksum: "sha256:834af9cd766d1fd86eca156db7dff34c3713fbbc7f5507a3269be2a72d2d1820"
+  filename: "ubuntu-24.04.qcow2"
+  
+# Base vmid for the created templates
+base_vmid: 1000
+
+# vm configuration
+golden_image:
+  name: ubuntu2404golden
