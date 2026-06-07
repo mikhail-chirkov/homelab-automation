@@ -6,8 +6,6 @@
         update_cache: true
         name:
           - sudo
-          - python3-requests
-          - python3-proxmoxer
 
     - name: Create sudo user
       ansible.builtin.user:

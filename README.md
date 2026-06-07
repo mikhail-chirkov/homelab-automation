@@ -1,4 +1,6 @@
 # homelab-automation
+WIP
+
 Collection of automation tools for the homelab.
 
 # Stack

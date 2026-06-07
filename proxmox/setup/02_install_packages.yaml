@@ -1,0 +1,16 @@
+- name: Install packages to the proxmox machine
+  hosts: nodes
+  become: true
+  tasks:
+    - name: Install packages
+      ansible.builtin.apt:
+        update_cache: true
+        name:
+          - python3-pip
+    - name: Install requests and proxmoxer via pip
+      ansible.builtin.pip:
+        name:
+          - requests
+          - proxmoxer
+        # Required for modern Proxmox/Debian versions
+        break_system_packages: true

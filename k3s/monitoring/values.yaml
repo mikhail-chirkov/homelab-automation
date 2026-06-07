@@ -29,15 +29,3 @@ prometheus:
           resources:
             requests:
               storage: 20Gi
-
-#kubeControllerManager:
-#  enabled: false
-#
-#kubeEtcd:
-#  enabled: false
-#
-#kubeProxy:
-#  enabled: false
-#
-#kubeScheduler:
-#  enabled: false
